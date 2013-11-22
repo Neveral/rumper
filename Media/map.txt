@@ -1,0 +1,20 @@
+tilemap.png
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0                                                                                 0
+0                                                                                 0
+0                                                                                 0
+0                                                                                 0
+0                                                                                 0
+0                                                                                 0
+0                                                                                 0
+0                                                                                 0
+0        bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb                                   0
+0                                                                                 0
+0                                                                                 0
+0                                                                                 0
+0                                                                                 0
+0                                                                                 0
+0                                                                                 0
+0                  bb                                                             0
+0                      bbbb     b                                                 0
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
