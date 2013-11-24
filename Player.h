@@ -2,6 +2,8 @@
 #define PLAYER_H
 
 #include <SFML\Graphics.hpp>
+#include "Map.h"
+
 
 class Player {
 
@@ -24,12 +26,14 @@ public:
 	void setPosition(sf::Vector2f &position);
 	sf::Vector2f getPosition()const;
 
-	void update();
-	bool collision();
+	void update(float time);
+	void collision(bool isMovingX);
 
 public:
 	bool onGround;
 	static const float speed;
 	float bottom, left, right, top;
+
+	Map map;
 };
 #endif PLAYER_H

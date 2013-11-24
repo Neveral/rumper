@@ -4,7 +4,7 @@
 #include <SFML\Graphics.hpp>
 #include "Player.h"
 #include "Statistics.h"
-#include "Map.h"
+//#include "Map.h"
 
 class Game
 {
@@ -23,11 +23,11 @@ private:
 
 private:
 	void processEvent();
-	void update();
+	void update(float time);
 	void render();
 	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
 	void screenScrolling();
-	void collision(/*bool isMovingX*/);
+	//void collision(/*bool isMovingX*/);
 
 public:
 	Game();
@@ -35,7 +35,7 @@ public:
 
 	Player player;
 	Statistics statistics;
-	Map map;
+	//Map map;
 };
 
 #endif

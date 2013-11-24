@@ -30,11 +30,15 @@ void Game::run()
 		timeSinseLastUpadate += elapsedTime;
 		statistics.updateStatistics(elapsedTime);
 
+		float time = elapsedTime.asMicroseconds();
+
 		while(timeSinseLastUpadate > timePerFrame)
 		{
 			timeSinseLastUpadate -= timePerFrame;
+			
+
 			processEvent();
-			update();
+			update(time);
 			screenScrolling();
 		}
 		render();
@@ -44,7 +48,7 @@ void Game::run()
 void Game::render()
 {
 	mainWindow.clear(sf::Color(56, 120, 55));
-	map.display(mainWindow);
+	player.map.display(mainWindow);
 	mainWindow.setView(view);
 	player.display(mainWindow);
 	statistics.display(mainWindow);
@@ -54,7 +58,6 @@ void Game::render()
 void Game::processEvent()
 {
 	sf::Event event;
-	//isMovingUp = isMovingDown = isMovingLeft = isMovingRight = false;
 	while(mainWindow.pollEvent(event))
 	{
 		switch(event.type)
@@ -73,19 +76,10 @@ void Game::processEvent()
 				break;
 		}
 	}
-	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) player.setDirection(sf::Vector2f(-player.speed, 0)); 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) player.setDirection(sf::Vector2f(player.speed, 0));
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) 
-		if (player.onGround)
-		{
-			player.setDirection(sf::Vector2f(0, -25*player.speed));
-			player.onGround = false;
-		}*/
 }
 //==================================================================
 void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 {
-	//isMovingUp = isMovingDown = isMovingLeft = isMovingRight = false;
 	if (key == sf::Keyboard::W || key == sf::Keyboard::Up)
 		isMovingUp = isPressed;
 	if (key == sf::Keyboard::S || key == sf::Keyboard::Down)
@@ -96,31 +90,28 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 		isMovingRight = isPressed;
 }
 //==================================================================
-void Game::update()
+void Game::update(float time)
 {
-	//sf::Vector2f direction(0.f, 0.f);
 	if (isMovingUp)
-		if (player.onGround)
+		if (player.onGround==true)
 		{
-			player.setDirectionY(-30*player.speed);
+			player.setDirectionY(-3*player.speed);
 			player.onGround = false;
 		}
 	if (isMovingDown)
 		player.setDirectionY(player.speed);
 	if (isMovingLeft)
-		player.setDirectionX(-player.speed);
+		player.setDirectionX(-2*player.speed);
 	if (isMovingRight)
-		player.setDirectionX(player.speed);
+		player.setDirectionX(2*player.speed);
 
-	//player.setDirection(direction);
-	player.update();	
-	collision();
+	player.update(time);	
 }
 //==================================================================
 void Game::screenScrolling()
 {
 	float curPosX = player.getPosition().x - screenDimensions.x/4;
-	float curPosY = player.getPosition().y - screenDimensions.y/4;
+	float curPosY = player.getPosition().y - screenDimensions.y/2;
 
 	if (curPosX < 0.f)
 		curPosX = 0.f;
@@ -136,63 +127,7 @@ void Game::screenScrolling()
 				);
 }
 //==================================================================
-void Game::collision(/*bool isMovingX*/)
-{
-	/*for ( int i = player.getPosition().y/32; 
-		i<(player.getPosition().y + 32)/32;
-		++i)
-		for ( int j = player.getPosition().x/32; 
-		j<(player.getPosition().x + 32)/32;
-		++j)
-			{
-				// processing
-				if (map.mapArray[i][j] == 'b' || map.mapArray[i][j] == 'p' || map.mapArray[i][j] == '0')
-				{
-					if (player.getDirection().y > 0)
-						player.setPosition(sf::Vector2f(player.getPosition().x, i*32 - 32));
-					if (player.getDirection().y < 0)
-						player.setPosition(sf::Vector2f(player.getPosition().x, i*32 + 32));
-				}
-			}*/
 
-	/*for (int i=0; i<map.mapArray.size(); ++i)
-	{
-		for (int j=0; j<map.mapArray[0].size(); ++j)
-		{*/
-	bool col=false;
-	for ( int i = player.getPosition().y/32; i<(player.getPosition().y + 32)/32; ++i)
-	{
-		for ( int j = player.getPosition().x/32; j<(player.getPosition().x + 32)/32; ++j)
-		{
-			if (map.mapArray[i][j] == 'b' || map.mapArray[i][j] == 'p' /*|| map.mapArray[i][j] == '0'*/)
-			{	
-				int bottom, top, left, right;
-				bottom = i * 32 + 32;
-				top = i * 32;
-				left = j * 32;
-				right = j * 32 + 32;
-				
-				if (player.right >= left && player.getDirection().x > 0){
-					player.setPosition(sf::Vector2f(j*32-32, player.getPosition().y));
-					break;
-				}
-				else if (player.left <= right && player.getDirection().x < 0){
-					player.setPosition(sf::Vector2f(j*32 + 32, player.getPosition().y));
-					break;
-				}
-				else if (player.bottom >= top && player.getDirection().y > 0){
-					player.setPosition(sf::Vector2f(player.getPosition().x, i*32-32));
-					player.onGround = true;
-					break;
-				}
-				else if (player.top <= bottom && player.getDirection().y < 0){
-					player.setPosition(sf::Vector2f(player.getPosition().x, i*32 + 32));
-					break;
-				}
-			}
-		}
-	}
-}
 //==================================================================
 //==================================================================
 //==================================================================

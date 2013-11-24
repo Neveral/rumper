@@ -27,7 +27,6 @@ void Statistics::updateStatistics(sf::Time elapsedTime)
 	updateTime -= sf::seconds(1.0f);
 	numFrames = 0;
 	}
-
 }
 //=================================================================
 void Statistics::display(sf::RenderWindow &window)
