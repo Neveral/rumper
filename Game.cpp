@@ -8,14 +8,19 @@ const sf::Vector2i screenDimensions(800, 600);
 const sf::Vector2i blockDimensions(32,32);
 
 
+
+
 Game::Game() : mainWindow(sf::VideoMode(screenDimensions.x, screenDimensions.y), 
 						  "Rumper"),
 						  isMovingDown(false),
 						  isMovingUp(false),
 						  isMovingLeft(false),
-						  isMovingRight(false)
+						  isMovingRight(false),
+						  menuVisible(false)
 {
-	
+	if(!soundBuffer.loadFromFile("Media/jump.wav"))
+		throw "Sound file jump.wav not found!";
+	soundJump.setBuffer(soundBuffer);
 }
 //==================================================================
 void Game::run()
@@ -30,50 +35,72 @@ void Game::run()
 		timeSinseLastUpadate += elapsedTime;
 		statistics.updateStatistics(elapsedTime);
 
-		float time = elapsedTime.asMicroseconds();
 
 		while(timeSinseLastUpadate > timePerFrame)
 		{
 			timeSinseLastUpadate -= timePerFrame;
-			
 
 			processEvent();
-			update(time);
-			screenScrolling();
+			update();
 		}
+
 		render();
 	}	
 }
 //==================================================================
 void Game::render()
 {
-	mainWindow.clear(sf::Color(56, 120, 55));
-	player.map.display(mainWindow);
-	mainWindow.setView(view);
-	player.display(mainWindow);
-	statistics.display(mainWindow);
-	mainWindow.display();
+	if(!menuVisible)
+	{
+		showGame();
+	}
+	else
+		showMenu();
 }
 //==================================================================
 void Game::processEvent()
 {
-	sf::Event event;
-	while(mainWindow.pollEvent(event))
+	if(!menuVisible) // event processing for game
 	{
-		switch(event.type)
+		while(mainWindow.pollEvent(gameEvent))
 		{
-			case sf::Event::Closed:
-				mainWindow.close();
-				break;
-			case sf::Event::KeyPressed:
-				if(event.key.code == sf::Keyboard::Escape)
+			switch(gameEvent.type)
+			{
+				case sf::Event::Closed:
 					mainWindow.close();
-				else
-					handlePlayerInput(event.key.code, true);
-				break;
-			case sf::Event::KeyReleased:
-				handlePlayerInput(event.key.code, false);
-				break;
+					break;
+				case sf::Event::KeyPressed:
+					if(gameEvent.key.code == sf::Keyboard::Escape)
+						menuVisible = true;
+					else if (gameEvent.key.code == sf::Keyboard::Num5)
+						player.reduceHelth();
+					else
+						handlePlayerInput(gameEvent.key.code, true);
+					break;
+				case sf::Event::KeyReleased:
+					handlePlayerInput(gameEvent.key.code, false);
+					break;
+			}
+		}
+	}
+	else // event processing for menu
+	{
+		while(mainWindow.pollEvent(menuEvent))
+		{
+			switch(menuEvent.type)
+			{
+				case sf::Event::Closed:
+					mainWindow.close();
+					break;
+				case sf::Event::KeyPressed:
+					if(menuEvent.key.code == sf::Keyboard::Escape)
+						menuVisible = false;
+					if(menuEvent.key.code == sf::Keyboard::Num2)
+						menuVisible = false;
+					if(menuEvent.key.code == sf::Keyboard::Num5)
+						mainWindow.close();
+					break;
+			}
 		}
 	}
 }
@@ -90,22 +117,23 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 		isMovingRight = isPressed;
 }
 //==================================================================
-void Game::update(float time)
+void Game::update()
 {
 	if (isMovingUp)
 		if (player.onGround==true)
 		{
 			player.setDirectionY(-3*player.speed);
 			player.onGround = false;
+			soundJump.play();
 		}
 	if (isMovingDown)
-		player.setDirectionY(player.speed);
+		player.setDirectionY(2*player.speed);
 	if (isMovingLeft)
 		player.setDirectionX(-2*player.speed);
 	if (isMovingRight)
 		player.setDirectionX(2*player.speed);
 
-	player.update(time);	
+	player.update();	
 }
 //==================================================================
 void Game::screenScrolling()
@@ -118,17 +146,34 @@ void Game::screenScrolling()
 	if (curPosY < 0.f)
 		curPosY = 0.f;
 
-	view.reset (sf::FloatRect(
+	gameView.reset (sf::FloatRect(
 								curPosX, 
-								curPosY, 
+								0.f, 
 								screenDimensions.x, 
 								screenDimensions.y
 							)
 				);
 }
 //==================================================================
-
+void Game::showGame()
+{
+	screenScrolling();
+	mainWindow.setView(gameView);
+	mainWindow.clear(sf::Color(125, 206, 250, 87));
+	player.map.display(&mainWindow);
+	player.display(&mainWindow);
+	statistics.display(&mainWindow);
+	mainWindow.display();
+}
 //==================================================================
+void Game::showMenu()
+{
+	menuView.reset(sf::FloatRect(0, 0, screenDimensions.x, screenDimensions.y));
+	mainWindow.setView(menuView);
+	mainWindow.clear(sf::Color::Black);
+	menu.display(mainWindow);
+	mainWindow.display();
+};
 //==================================================================
 //==================================================================
 //==================================================================

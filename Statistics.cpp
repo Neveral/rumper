@@ -29,9 +29,9 @@ void Statistics::updateStatistics(sf::Time elapsedTime)
 	}
 }
 //=================================================================
-void Statistics::display(sf::RenderWindow &window)
+void Statistics::display(sf::RenderWindow* window)
 {
-	window.draw(text);
+	window->draw(text);
 }
 //=================================================================
 //=================================================================

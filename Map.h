@@ -14,7 +14,7 @@ private:
 public:
 	Map();
 	std::vector<std::vector<char>> mapArray; // !!!!!!!!!!!
-	void display(sf::RenderWindow &window);
+	void display(sf::RenderWindow* window);
 	static const sf::Vector2i blockSize;
 	//char operator[] (int index);
 };

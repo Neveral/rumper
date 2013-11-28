@@ -14,7 +14,7 @@ public:
 	Statistics();
 	sf::Text text;
 	void updateStatistics(sf::Time elapsedTime);
-	void display (sf::RenderWindow &window);
+	void display (sf::RenderWindow* window);
 };
 
 #endif

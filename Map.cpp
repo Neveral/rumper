@@ -34,7 +34,7 @@ Map::Map()
 	}
 }
 //================================================================
-void Map::display(sf::RenderWindow &window)
+void Map::display(sf::RenderWindow* window)
 {
 	for (int i=0; i<mapArray.size(); ++i)
 	{
@@ -46,11 +46,13 @@ void Map::display(sf::RenderWindow &window)
 				mapSprite.setTextureRect(sf::IntRect(0, 0, blockSize.x, blockSize.y));
 			if (mapArray[i][j] == 'p')
 				mapSprite.setTextureRect(sf::IntRect(32, 0, blockSize.x, blockSize.y));
+			if (mapArray[i][j] == 'w')
+				mapSprite.setTextureRect(sf::IntRect(64, 0, blockSize.x, blockSize.y));
 
 			if (mapArray[i][j] == '0' || mapArray[i][j] == ' ')
 				continue;
 
-			window.draw(mapSprite);
+			window->draw(mapSprite);
 		}
 	}
 }

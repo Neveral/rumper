@@ -2,15 +2,32 @@
 #define GAME_H
 
 #include <SFML\Graphics.hpp>
+#include <SFML\Audio.hpp>
 #include "Player.h"
 #include "Statistics.h"
+#include "Menu.h"
 //#include "Map.h"
 
 class Game
 {
 private:
 	sf::RenderWindow mainWindow;
-	sf::View view;
+	sf::SoundBuffer soundBuffer;
+	sf::Sound soundJump;
+
+	sf::View gameView;
+	sf::View menuView;
+	bool menuVisible;
+
+	static const sf::Time timePerFrame;
+
+	sf::Event gameEvent;
+	sf::Event menuEvent;
+
+	Player player;
+	Statistics statistics;
+	Menu menu;
+
 
 	/* for player */
 	bool isMovingUp;
@@ -19,23 +36,20 @@ private:
 	bool isMovingRight;
 	/* end for player */
 
-	static const sf::Time timePerFrame;
 
-private:
 	void processEvent();
-	void update(float time);
+	void update();
 	void render();
 	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
 	void screenScrolling();
-	//void collision(/*bool isMovingX*/);
+	void showMenu();
+	void showGame();
+
 
 public:
 	Game();
 	void run();
 
-	Player player;
-	Statistics statistics;
-	//Map map;
 };
 
 #endif
