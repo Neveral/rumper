@@ -13,11 +13,11 @@ private:
 
 public:
 	Map();
+	Map(const char n);
 	std::vector<std::vector<char>> mapArray; // !!!!!!!!!!!
 	void display(sf::RenderWindow* window);
 	static const sf::Vector2i blockSize;
 	//char operator[] (int index);
 };
-
 
 #endif

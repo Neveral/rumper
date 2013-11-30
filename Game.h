@@ -6,7 +6,8 @@
 #include "Player.h"
 #include "Statistics.h"
 #include "Menu.h"
-//#include "Map.h"
+#include "Map.h"
+#include "Enemy.h"
 
 class Game
 {
@@ -24,7 +25,9 @@ private:
 	sf::Event gameEvent;
 	sf::Event menuEvent;
 
+	Map* map;
 	Player player;
+	Enemy enemy;
 	Statistics statistics;
 	Menu menu;
 
@@ -38,7 +41,7 @@ private:
 
 
 	void processEvent();
-	void update();
+	void update(Map* &map);
 	void render();
 	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
 	void screenScrolling();

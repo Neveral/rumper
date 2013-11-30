@@ -15,6 +15,7 @@ public:
 	sf::Text text;
 	void updateStatistics(sf::Time elapsedTime);
 	void display (sf::RenderWindow* window);
+	void setStatisticsTextPosition(float x, float y);
 };
 
 #endif

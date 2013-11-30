@@ -34,4 +34,8 @@ void Statistics::display(sf::RenderWindow* window)
 	window->draw(text);
 }
 //=================================================================
+void Statistics::setStatisticsTextPosition(float x, float y)
+{
+	text.setPosition(x, y);
+}
 //=================================================================

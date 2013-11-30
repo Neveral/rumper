@@ -11,7 +11,7 @@ const sf::Vector2i blockDimensions(32,32);
 
 
 Game::Game() : mainWindow(sf::VideoMode(screenDimensions.x, screenDimensions.y), 
-						  "Rumper"),
+						  "Rumper", sf::Style::Close),
 						  isMovingDown(false),
 						  isMovingUp(false),
 						  isMovingLeft(false),
@@ -21,6 +21,8 @@ Game::Game() : mainWindow(sf::VideoMode(screenDimensions.x, screenDimensions.y),
 	if(!soundBuffer.loadFromFile("Media/jump.wav"))
 		throw "Sound file jump.wav not found!";
 	soundJump.setBuffer(soundBuffer);
+
+	map = new Map('1');
 }
 //==================================================================
 void Game::run()
@@ -41,7 +43,7 @@ void Game::run()
 			timeSinseLastUpadate -= timePerFrame;
 
 			processEvent();
-			update();
+			update(map);
 		}
 
 		render();
@@ -117,10 +119,10 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 		isMovingRight = isPressed;
 }
 //==================================================================
-void Game::update()
+void Game::update(Map* &map)
 {
 	if (isMovingUp)
-		if (player.onGround==true)
+		if (player.onGround == true)
 		{
 			player.setDirectionY(-3*player.speed);
 			player.onGround = false;
@@ -133,7 +135,8 @@ void Game::update()
 	if (isMovingRight)
 		player.setDirectionX(2*player.speed);
 
-	player.update();	
+	player.update(map);
+	enemy.update(map);
 }
 //==================================================================
 void Game::screenScrolling()
@@ -146,6 +149,8 @@ void Game::screenScrolling()
 	if (curPosY < 0.f)
 		curPosY = 0.f;
 
+	player.setHealthSpritePosition(curPosX + screenDimensions.x*0.02, 10.f);
+	statistics.setStatisticsTextPosition(curPosX + screenDimensions.x*0.8, 10.f);
 	gameView.reset (sf::FloatRect(
 								curPosX, 
 								0.f, 
@@ -160,8 +165,10 @@ void Game::showGame()
 	screenScrolling();
 	mainWindow.setView(gameView);
 	mainWindow.clear(sf::Color(125, 206, 250, 87));
-	player.map.display(&mainWindow);
+	//std::cout << map->mapArray[0][0] << std::endl;
+	map->display(&mainWindow);
 	player.display(&mainWindow);
+	enemy.display(&mainWindow);
 	statistics.display(&mainWindow);
 	mainWindow.display();
 }

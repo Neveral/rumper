@@ -8,13 +8,13 @@ tilemap.png
 0                                                                                 0
 0                                                                                 0
 0                                                                                 0
-0        bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb                                   0
+0                 bbb         bbbb        bbbb         bbbbb                   df 0
+0         bb                                                                   ff 0
 0                                                                                 0
-0                                                                                 0
-0       bb                                                                        0
+0            bbb                                                                  0
 0         bb                                                                      0
 0            bb                               bb                bb                0
-0                  bb                                                           df0
-0               bb                                     bb                bb     ff0
+0                  bb                                                             0
+0 pp                                                   bb                bb       0
 pppppppppppppppppppppppppppwwpppppppppppwwppppppppppppppppppppppppppppppppppppppppp
 ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp

@@ -4,10 +4,19 @@ const sf::Vector2i Map::blockSize=sf::Vector2i(32, 32);
 
 Map::Map()
 {
+
+}
+//============================================================
+Map::Map(const char n)
+{
+	std::string mapFileName("Media/map");
+	mapFileName.push_back(n);
+	mapFileName += ".txt";
+
 	std::vector<char> tempMapArray;
-	std::ifstream mapFile("Media/map.txt");
+	std::ifstream mapFile(mapFileName.c_str());
 	if (!mapFile.is_open())
-		throw "Error: Can't load map file map.txt";
+		throw "Error: Can't load map file";
 		
 	std::string mapTextureFileName;
 	mapFile >> mapTextureFileName;
@@ -48,11 +57,14 @@ void Map::display(sf::RenderWindow* window)
 				mapSprite.setTextureRect(sf::IntRect(32, 0, blockSize.x, blockSize.y));
 			if (mapArray[i][j] == 'w')
 				mapSprite.setTextureRect(sf::IntRect(64, 0, blockSize.x, blockSize.y));
+			if (mapArray[i][j] == 'd')
+				mapSprite.setTextureRect(sf::IntRect(0, 32, blockSize.x*2, blockSize.y*2));
 
-			if (mapArray[i][j] == '0' || mapArray[i][j] == ' ')
+			if (mapArray[i][j] == '0' || mapArray[i][j] == ' ' || mapArray[i][j] == 'f')
 				continue;
 
 			window->draw(mapSprite);
 		}
 	}
 }
+
