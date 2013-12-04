@@ -16,6 +16,15 @@ private:
 public:
 	Enemy();
 	Enemy(float x, float y);
+	sf::FloatRect rect;
+	bool life;
+	/*
+	// for bullet
+	sf::Texture bulletTexture;
+	sf::Sprite bulletSprite;
+	// end for bullet
+	*/
+
 
 	static const float speed;
 	static int changeDirectionCounter;

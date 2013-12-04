@@ -7,17 +7,17 @@ Map::Map()
 
 }
 //============================================================
-Map::Map(const char n)
+Map::Map(int currentLevel)
 {
-	std::string mapFileName("Media/map");
-	mapFileName.push_back(n);
+	std::string mapFileName;
+	mapFileName = "Media/map" + std::to_string(currentLevel);
 	mapFileName += ".txt";
 
 	std::vector<char> tempMapArray;
 	std::ifstream mapFile(mapFileName.c_str());
 	if (!mapFile.is_open())
 		throw "Error: Can't load map file";
-		
+
 	std::string mapTextureFileName;
 	mapFile >> mapTextureFileName;
 	mapFile.get(); // skip new line symbol

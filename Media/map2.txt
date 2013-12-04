@@ -1,19 +1,19 @@
 tilemap.png
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0                                                                         df      0
+0                                                                         ff      0
+0                                                                                 0
+0                                                                      b          0
+0                                                                                 0
+0                                                                        b        0
 0                                                                                 0
 0                                                                                 0
-0                                                                                 0
-0                                                                                 0
-0                                                                                 0
-0                                                                                 0
-0                                                                                 0
-0                                                                                 0
-0                 bbb         bbbb        bbbb         bbbbb                   df 0
-0         bb                                                                   ff 0
-0                                                                                 0
+0                 bbb         bbbb        bbbb         bbbbb            b         0
+0         bb                                                                      0
+0                                                                         b       0
 0            bbb                                                                  0
 0         bb                                                                      0
-0            bb                               bb                bb                0
+0            bb                               bb                bb       b        0
 0                  bb                                                             0
 0 pp                                                   bb                bb       0
 pppppppppppppppppppppppppppwwpppppppppppwwppppppppppppppppppppppppppppppppppppppppp

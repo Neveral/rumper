@@ -6,7 +6,6 @@
 class Menu
 {
 private:
-	sf::Text menuTextPause;
 	sf::Text menuTextPressSomething;
 	sf::Text menuTextNewGame;
 	sf::Text menuTextLoadGame;
@@ -19,6 +18,7 @@ private:
 public:
 	Menu();
 	void display(sf::RenderWindow &window);
+	sf::Text menuTextPause;
 };
 
 

@@ -13,12 +13,16 @@ class Game
 {
 private:
 	sf::RenderWindow mainWindow;
-	sf::SoundBuffer soundBuffer;
+	sf::SoundBuffer soundBufferJump;
 	sf::Sound soundJump;
+	sf::SoundBuffer soundBufferHurt;
+	sf::Sound soundHurt;
 
 	sf::View gameView;
 	sf::View menuView;
 	bool menuVisible;
+
+	int currentLevel;
 
 	static const sf::Time timePerFrame;
 
@@ -27,7 +31,9 @@ private:
 
 	Map* map;
 	Player player;
-	Enemy enemy;
+	Enemy* enemy1;
+	Enemy* enemy2;
+	std::vector<Enemy*> enemyArmy;
 	Statistics statistics;
 	Menu menu;
 
@@ -41,12 +47,16 @@ private:
 
 
 	void processEvent();
-	void update(Map* &map);
+	void update(Map* &map, int &currentLevel);
 	void render();
 	void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
 	void screenScrolling();
 	void showMenu();
 	void showGame();
+
+	void newGame();
+	void saveGame();
+	void loadGame();
 
 
 public:

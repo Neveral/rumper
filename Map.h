@@ -13,7 +13,7 @@ private:
 
 public:
 	Map();
-	Map(const char n);
+	Map(int currentLevel);
 	std::vector<std::vector<char>> mapArray; // !!!!!!!!!!!
 	void display(sf::RenderWindow* window);
 	static const sf::Vector2i blockSize;

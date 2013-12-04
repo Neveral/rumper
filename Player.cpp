@@ -11,6 +11,7 @@ Player::Player()
 	direction = sf::Vector2f(0,0);
 	sprite.setTexture(texture);
 	sprite.setTextureRect(sf::IntRect(0, 0, textureFrameSize.x, textureFrameSize.y));
+	rect = sf::FloatRect(100, 50, textureFrameSize.x, textureFrameSize.y);
 	sprite.setPosition(100.f,50.f);
 	onGround = false;
 
@@ -52,6 +53,7 @@ sf::Vector2f Player::getDirection() const
 void Player::setPosition(sf::Vector2f &position)
 {
 	sprite.setPosition(position);
+
 }
 //=============================================================
 sf::Vector2f Player::getPosition()const
@@ -59,9 +61,9 @@ sf::Vector2f Player::getPosition()const
 	return sprite.getPosition();
 }
 //=============================================================
-void Player::update(Map* &map)
+void Player::update(Map* &map, int &currentLevel)
 {
-	updateHelth();
+	updateHealth();
 
 	const float time = 20;
 
@@ -71,11 +73,11 @@ void Player::update(Map* &map)
 	top = sprite.getPosition().y;*/
 	
 	sprite.move(direction.x*time,0);
-	collision(map, true);
+	collision(map, currentLevel, true);
 
-	sprite.move(0, direction.y*time*2);
-	onGround=false;
-	collision(map, false);
+	sprite.move(0, direction.y*time*2); 
+	direction.y = direction.y + 0.001*time;
+	collision(map, currentLevel, false);
 
 	currentFrame += time * 0.006;
 	if(currentFrame > 5) 
@@ -88,13 +90,16 @@ void Player::update(Map* &map)
 	if(direction.x < 0)
 		sprite.setTextureRect(sf::IntRect(textureFrameSize.x*int(currentFrame)+textureFrameSize.x, 0, -textureFrameSize.x, textureFrameSize.y));
 
-	if (!onGround)
-		direction.y = direction.y + 0.001*time;
+	/*if (!onGround)
+		direction.y = direction.y + 0.001*time;*/
+
+	rect.left = getPosition().x;
+	rect.top = getPosition().y;
 
 	direction.x=0.f;
 }
 //=============================================================
-void Player::collision(Map* &map, bool isMovingX)
+void Player::collision(Map* &map, int &currentLevel, bool isMovingX)
 {
 	for ( int i = getPosition().y/32; i<(getPosition().y + textureFrameSize.y)/32; ++i)
 	{
@@ -131,22 +136,27 @@ void Player::collision(Map* &map, bool isMovingX)
 			}
 			if(map->mapArray[i][j] == 'f')
 			{
+				++currentLevel;
 				//std::cout << "Finish!!!" << std::endl;
-				map = new Map('2');
-				sprite.setPosition(100.f,50.f);
-				health = 3;
-				break;
+				if(currentLevel < 3)
+				{
+					if(map != NULL) delete map;
+					map = new Map(currentLevel);
+					sprite.setPosition(100.f,50.f);
+					health = 3;
+					break;
+				}
 			}
 		}
 	}
 }
 //=============================================================
-void Player::reduceHelth()
+void Player::reduceHealth()
 {
 	--health;
 }
 //=============================================================
-void Player::updateHelth()
+void Player::updateHealth()
 {
 	switch (health)
 	{
@@ -165,8 +175,19 @@ void Player::updateHelth()
 	}
 }
 //=============================================================
+void Player::setHealth(short int hp)
+{
+	health = hp;
+}
+//=============================================================
+short int Player::getHealth()const
+{
+	return health;
+}
+//=============================================================
 void Player::setHealthSpritePosition(float x, float y)
 {
 	healthSprite.setPosition(x, y);
 }
+//=============================================================
 //=============================================================

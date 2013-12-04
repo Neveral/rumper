@@ -20,17 +20,19 @@ private:
 
 public:
 	Player();
-	
+	sf::FloatRect rect;
 	void display(sf::RenderWindow* window);
 
 	void setDirection(sf::Vector2f &direct);
 	void setDirectionX(float dirX);
 	void setDirectionY(float dirY);
 	void setPosition(sf::Vector2f &position);
-	void update(Map* &map);
-	void collision(Map* &map, bool isMovingX);
-	void reduceHelth();
-	void updateHelth();
+	void update(Map* &map, int &currentLevel);
+	void collision(Map* &map, int &currentLevel, bool isMovingX);
+	void reduceHealth();
+	void updateHealth();
+	void setHealth(short int hp);
+	short int getHealth()const;
 	void setHealthSpritePosition(float x, float y);
 
 	sf::Vector2f getDirection()const;

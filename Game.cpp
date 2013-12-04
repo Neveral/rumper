@@ -1,12 +1,13 @@
 #include "Game.h"
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <SFML\Graphics.hpp>
 
 const sf::Time Game::timePerFrame = sf::seconds(1.f/60.f);
 const sf::Vector2i screenDimensions(800, 600);
 const sf::Vector2i blockDimensions(32,32);
-
+bool spike = true;
 
 
 
@@ -16,13 +17,20 @@ Game::Game() : mainWindow(sf::VideoMode(screenDimensions.x, screenDimensions.y),
 						  isMovingUp(false),
 						  isMovingLeft(false),
 						  isMovingRight(false),
-						  menuVisible(false)
+						  menuVisible(false),
+						  currentLevel(1)
 {
-	if(!soundBuffer.loadFromFile("Media/jump.wav"))
+	if(!soundBufferJump.loadFromFile("Media/jump.wav"))
 		throw "Sound file jump.wav not found!";
-	soundJump.setBuffer(soundBuffer);
+	soundJump.setBuffer(soundBufferJump);
 
-	map = new Map('1');
+	if(!soundBufferHurt.loadFromFile("Media/hurt.wav"))
+		throw "Sound file hurt.wav not found!";
+	soundHurt.setBuffer(soundBufferHurt);
+
+	map = new Map(currentLevel);
+	enemy1 = new Enemy(600.f, 50.f);
+	enemy2 = new Enemy(1000.f, 50.f);
 }
 //==================================================================
 void Game::run()
@@ -43,10 +51,19 @@ void Game::run()
 			timeSinseLastUpadate -= timePerFrame;
 
 			processEvent();
-			update(map);
+			update(map, currentLevel);
 		}
 
-		render();
+		if(player.getHealth() <= 0)
+		{
+			menu.menuTextPause.setString("Game Over");
+			showMenu();
+			menuVisible = true;
+			enemy1->life=false;
+			enemy2->life=false;
+		}
+		else
+			render();
 	}	
 }
 //==================================================================
@@ -75,7 +92,7 @@ void Game::processEvent()
 					if(gameEvent.key.code == sf::Keyboard::Escape)
 						menuVisible = true;
 					else if (gameEvent.key.code == sf::Keyboard::Num5)
-						player.reduceHelth();
+						player.reduceHealth();
 					else
 						handlePlayerInput(gameEvent.key.code, true);
 					break;
@@ -95,10 +112,19 @@ void Game::processEvent()
 					mainWindow.close();
 					break;
 				case sf::Event::KeyPressed:
-					if(menuEvent.key.code == sf::Keyboard::Escape)
+					if(player.getHealth() > 0)
+					{
+						if(menuEvent.key.code == sf::Keyboard::Escape)
+							menuVisible = false;
+						if(menuEvent.key.code == sf::Keyboard::Num2)
 						menuVisible = false;
-					if(menuEvent.key.code == sf::Keyboard::Num2)
-						menuVisible = false;
+					}
+					if(menuEvent.key.code == sf::Keyboard::Num1)
+						newGame();
+					if(menuEvent.key.code == sf::Keyboard::Num3)
+						loadGame();
+					if(menuEvent.key.code == sf::Keyboard::Num4)
+						saveGame();
 					if(menuEvent.key.code == sf::Keyboard::Num5)
 						mainWindow.close();
 					break;
@@ -119,7 +145,7 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 		isMovingRight = isPressed;
 }
 //==================================================================
-void Game::update(Map* &map)
+void Game::update(Map* &map, int &currentLevel)
 {
 	if (isMovingUp)
 		if (player.onGround == true)
@@ -128,15 +154,70 @@ void Game::update(Map* &map)
 			player.onGround = false;
 			soundJump.play();
 		}
-	if (isMovingDown)
-		player.setDirectionY(2*player.speed);
-	if (isMovingLeft)
-		player.setDirectionX(-2*player.speed);
-	if (isMovingRight)
-		player.setDirectionX(2*player.speed);
+		if (isMovingDown)
+			player.setDirectionY(2*player.speed);
+		if (isMovingLeft)
+			player.setDirectionX(-2*player.speed);
+		if (isMovingRight)
+			player.setDirectionX(2*player.speed);
 
-	player.update(map);
-	enemy.update(map);
+		if  (player.rect.intersects( enemy1-> rect ) )
+		{
+			if (enemy1->life) {
+				if (!player.onGround) 
+				{ 
+					enemy1->setDirectionX(0); 
+					enemy1->setDirectionY(-0.2); 
+					enemy1->life=false;
+				}
+				else
+				{
+					player.reduceHealth();
+					player.setPosition(sf::Vector2f(player.getPosition().x - 50, player.getPosition().y));
+					soundHurt.play();
+				}
+			}
+		}
+
+		if  (player.rect.intersects( enemy2 -> rect ) )
+		{
+			if (enemy2->life) {
+				if (!player.onGround) 
+				{ 
+					enemy2->setDirectionX(0); 
+					enemy2->setDirectionY(-0.2); 
+					enemy2->life=false;
+				}
+				else 
+				{
+					player.reduceHealth();
+					player.setPosition(sf::Vector2f(player.getPosition().x - 50, player.getPosition().y));
+					soundHurt.play();
+				}
+			}
+		}
+
+		player.update(map, currentLevel);
+		if(currentLevel >= 3)
+		{
+			menu.menuTextPause.setString("Congratulations! Victory!");
+			showMenu();
+			menuVisible = true;
+			exit;
+		}
+		enemy1->update(map);
+		enemy2->update(map);
+
+
+
+		if(currentLevel == 2 && spike == true)
+		{
+			if(enemy1->life == false)
+				enemy1->life = true;
+			enemy2->life = true;
+			spike = false;
+		}
+
 }
 //==================================================================
 void Game::screenScrolling()
@@ -164,11 +245,11 @@ void Game::showGame()
 {
 	screenScrolling();
 	mainWindow.setView(gameView);
-	mainWindow.clear(sf::Color(125, 206, 250, 87));
-	//std::cout << map->mapArray[0][0] << std::endl;
+	mainWindow.clear(sf::Color(128, 166, 255,  87));
 	map->display(&mainWindow);
 	player.display(&mainWindow);
-	enemy.display(&mainWindow);
+	enemy1->display(&mainWindow);
+	enemy2->display(&mainWindow);
 	statistics.display(&mainWindow);
 	mainWindow.display();
 }
@@ -182,5 +263,80 @@ void Game::showMenu()
 	mainWindow.display();
 };
 //==================================================================
+void Game::newGame()
+{
+	currentLevel = 1;
+	map = new Map(currentLevel);
+	player.setPosition(sf::Vector2f(100.f, 50.f));
+	enemy1->setPosition(sf::Vector2f(300.f, 50.f));
+	enemy2->setPosition(sf::Vector2f(800.f, 50.f));
+	enemy1->life = true;
+	enemy2->life = true;
+	player.setHealth(3);
+	player.setDirection(sf::Vector2f(0,0));
+	menu.menuTextPause.setString("Pause");
+	isMovingDown = false;
+	isMovingUp = false;
+	isMovingLeft = false;
+	isMovingRight = false;
+	spike = true;
+	menuVisible = false;
+}
 //==================================================================
+void Game::saveGame()
+{
+	std::ofstream outFile("settings.ini");
+	outFile << currentLevel;
+	outFile << std::endl;
+	outFile << player.getHealth();
+	
+	menuVisible = false;
+}
+//==================================================================
+void Game::loadGame()
+{
+	short int hp;
+	std::ifstream inFile("settings.ini");
+	inFile >> currentLevel;
+	inFile >> hp;
+
+	switch (currentLevel)
+	{
+	case 1:
+		if (map) delete map;
+		map = new Map(currentLevel);
+		player.setPosition(sf::Vector2f(100.f, 50.f));
+		enemy1->setPosition(sf::Vector2f(300.f, 50.f));
+		enemy2->setPosition(sf::Vector2f(800.f, 50.f));
+		enemy1->life = true;
+		enemy2->life = true;
+		player.setHealth(hp);
+		player.setDirection(sf::Vector2f(0,0));
+		menu.menuTextPause.setString("Pause");
+		isMovingDown = false;
+		isMovingUp = false;
+		isMovingLeft = false;
+		isMovingRight = false;
+		menuVisible = false;
+		break;
+	case 2:
+		if (map) delete map;
+		map = new Map(currentLevel);
+		player.setPosition(sf::Vector2f(100.f, 50.f));
+		enemy1->setPosition(sf::Vector2f(300.f, 50.f));
+		enemy2->setPosition(sf::Vector2f(800.f, 50.f));
+		enemy1->life = true;
+		enemy2->life = true;
+		player.setHealth(hp);
+		player.setDirection(sf::Vector2f(0,0));
+		menu.menuTextPause.setString("Pause");
+		isMovingDown = false;
+		isMovingUp = false;
+		isMovingLeft = false;
+		isMovingRight = false;
+		menuVisible = false;
+		break;
+	}
+	menuVisible = false;
+}
 //==================================================================

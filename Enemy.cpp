@@ -14,6 +14,10 @@ Enemy::Enemy()
 	direction = sf::Vector2f(0,0);
 	onGround = false;
 	currentFrame = 0;
+
+	/*if(!bulletTexture.loadFromFile("Media/bullet.png"))
+		throw "File bullet.png not found";
+	bulletSprite.setTexture(bulletTexture);*/
 }
 //======================================================
 Enemy::Enemy(float x, float y)
@@ -23,26 +27,36 @@ Enemy::Enemy(float x, float y)
 	sprite.setTexture(texture);
 	sprite.setPosition(x, y);
 	sprite.setTextureRect(sf::IntRect(0, 0, textureFrameSize.x, textureFrameSize.y));
+	rect = sf::FloatRect(x,y, textureFrameSize.x,textureFrameSize.y);
+	life = true;
 	direction = sf::Vector2f(0,0);
 	onGround = false;
 	currentFrame = 0;
+
+	/*if(!bulletTexture.loadFromFile("Media/bullet.png"))
+		throw "File bullet.png not found";
+	bulletSprite.setTexture(bulletTexture);*/
+	//bulletSprite.setPosition(x, y);
 }
 //=======================================================
 void Enemy::display(sf::RenderWindow* window)
 {
 	window->draw(sprite);
+	//window->draw(bulletSprite);
 }
 //=======================================================
 void Enemy::update(Map* map)
 {
+	if(life){
 	const float time = 20;
-
 	++changeDirectionCounter;
 	if(changeDirectionCounter <= 200)
 		direction.x = speed*time;
 	else
 		direction.x = -speed*time;	
+
 	sprite.move(direction.x, 0);
+
 	if(changeDirectionCounter >= 400)
 		changeDirectionCounter = 0;
 
@@ -65,8 +79,14 @@ void Enemy::update(Map* map)
 		sprite.setTextureRect(sf::IntRect(0, 0, textureFrameSize.x, textureFrameSize.y));
 	if(direction.x < 0)
 		sprite.setTextureRect(sf::IntRect(textureFrameSize.x*int(currentFrame)+textureFrameSize.x, 0, -textureFrameSize.x, textureFrameSize.y));
-
+	
+	sprite.setColor(sf::Color::White);	
+	rect.left = getPosition().x;
+	rect.top = getPosition().y;
 	direction.x=0.f;
+	}
+	else
+		sprite.setColor(sf::Color::Blue);
 	}
 //=======================================================
 void Enemy::collision(Map* map, bool isMovingX)
